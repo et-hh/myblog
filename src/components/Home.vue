@@ -1,5 +1,6 @@
 <template>
   <div class="marginTop">
+    <el-button class="add-btn" type="primary" icon="el-icon-plus" circle @click="addPage"></el-button>
     <el-row type="flex" justify="center" align="middle" v-for="item in posts" :key="item.id">
       <el-col :span="20" :xs="{span: 23}" :sm="{span: 23}" :md="{span: 23}" :lg="{span: 20}" class="post-card">
         <Card :item="item"></Card>
@@ -56,6 +57,9 @@ export default {
     },
     toTaglist(e) {
       this.$router.push("/tags/" + e.target.innerText);
+    },
+    addPage() {
+      
     }
   }
 };
@@ -73,6 +77,13 @@ export default {
   &:last-child {
     margin-bottom: 10px;
   }
+}
+
+.add-btn {
+  position: absolute;
+  right: 10px;
+  z-index: 100;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
 .marginTop {

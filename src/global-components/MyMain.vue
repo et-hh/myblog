@@ -44,19 +44,19 @@ export default {
           break;
         case "all/":
           w = "All";
-          document.title = w // this.$themeConfig.menus.all + " · " + this.$site.title;
+          document.title = this.$themeConfig.menus.all + " · " + this.$site.title;
           break;
         case "tags/":
           w = "Tags";
-          document.title = w // this.$themeConfig.menus.tags + "  ·  " + this.$site.title;
+          document.title = this.$themeConfig.menus.tags + "  ·  " + this.$site.title;
           break;
         case "about":
           w = "About";
-          document.title = w // this.$themeConfig.menus.about + " · " + this.$site.title;
+          document.title = this.$themeConfig.menus.about + " · " + this.$site.title;
           break;
         default:
           w = "Home";
-          document.title = w // this.$themeConfig.menus.home + " · " + this.$site.title;
+          document.title = this.$themeConfig.menus.home + " · " + this.$site.title;
       }
       if (this.$route.path.indexOf("/tags/") > -1 && !w) {
         w = "Tags";
@@ -64,8 +64,8 @@ export default {
           w +
           " · " +
           this.$route.params.tag
-          // " · " +
-          // this.$site.title;
+          " · " +
+          this.$site.title;
       }
       return w;
     },

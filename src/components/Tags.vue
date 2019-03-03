@@ -62,7 +62,7 @@ export default {
   data () {
     return {
       tagName: "",
-      tagsList: tagsList
+      tagsList
     };
   },
   props: {
@@ -93,16 +93,23 @@ export default {
           "conentHeader"
         ).innerText = this.$route.params.tag;
       }
+    },
+    setTagName(route) {
+      if (!route.params) return;
+      this.tagName = route.params.tag;
+      if (typeof window === "undefined") return;
+      document.getElementById("conentHeader").innerText = route.params.tag;
     }
   },
   watch: {
     $route (to, from) {
       if (to.params.tag) {
-        this.tagName = to.params.tag;
-        if (typeof window === "undefined") return;
-        document.getElementById("conentHeader").innerText = to.params.tag;
+        this.setTagName(to)
       }
     }
+  },
+  mounted() {
+    this.setTagName(this.$route)
   }
 };
 </script>

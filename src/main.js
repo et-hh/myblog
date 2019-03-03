@@ -4,15 +4,18 @@ import './plugins/element.js'
 
 import router from '@/router/routes'
 
-import '@/styles/index.styl';
 import '@/styles/element-variables.scss';
 import '@/styles/iconfont.css';
 import '@/styles/code.styl';
 import '@/styles/content.styl';
+import '@/styles/index.styl';
 
 Vue.config.productionTip = false
 
-Vue.prototype.$site = {}
+Vue.prototype.$site = {
+  title: 'Yiwise',
+  description: '三人行，必有我师焉，择其善者而从之，其不善者而改之。'
+}
 Vue.prototype.$themeConfig = {
   placeholder: '搜搜看', //搜索框的默认文章
   searchReply: '什么都没搜到，试一下其它搜索词~',

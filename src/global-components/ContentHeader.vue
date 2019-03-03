@@ -78,6 +78,7 @@ export default {
   color: #fff;
   background: #3f51b5;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
 }
 
 .content-header .subtitle {

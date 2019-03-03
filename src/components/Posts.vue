@@ -14,7 +14,7 @@
         class="post-card"
         id="post-card"
       >
-        <Content></Content>
+        <div class="content default" v-html="compiledMarkdown"></div>
         <span id="footerPost"></span>
       </el-col>
       <el-col
@@ -89,7 +89,7 @@
     >
       <el-col
         :span="23"
-        v-if="false"
+        v-if="$themeConfig.vssue.need"
       >
         <my-vssue />
       </el-col>
@@ -99,6 +99,9 @@
 </template>
 <script>
 import TocBtn from "@/components/TocBtn";
+import marked from 'marked'
+import mdData from '@/data/test-markdown.md'
+
 export default {
   name: "Posts",
   title: 'Posts',
@@ -109,7 +112,7 @@ export default {
   data () {
     return {
       nextPost: 0,
-      prevPost: 3,
+      prevPost: 1,
       allH: [],
       catalogList: [],
       currentIndex: 0,
@@ -123,6 +126,16 @@ export default {
       default: () => []
     }
   },
+  computed:{
+    compiledMarkdown () {
+      //this.articleDetail.context数据
+      var div = document.createElement('div')
+      div.innerHTML = marked(mdData, { sanitize: true })
+      console.log(div.innerHTML)
+      console.log(div.innerText)
+      return div.innerText
+    }
+  },
   created () {
     this.getPageIndex();
     setTimeout(() => {
@@ -130,6 +143,7 @@ export default {
     }, 100);
   },
   mounted () {
+    // this.initIndex(this.$route)
     setTimeout(() => {
       this.getH();
       this.changeIndex();
@@ -208,7 +222,7 @@ export default {
         return;
       }
       for (var i = 0, len = this.content.length; i < len; i++) {
-        if (this.content[i].path === this.$page.path) {
+        if (this.content[i].path === this.$route.params.path) {
           if (i + 1 === this.content.length) {
             this.nextPost = NaN;
             this.prevPost = i - 1;
@@ -240,7 +254,7 @@ export default {
       window.addEventListener(
         "scroll",
         _this.throttle(
-          function (e) {
+          function () {
             if (_this.$route.path.slice(0, 7) !== "/posts/") return;
             let h = _this.getScrollTop();
             const postCard = document.getElementById("post-card");
@@ -274,17 +288,20 @@ export default {
           toc.classList.add("fixed");
         }
       });
-    }
-  },
-  watch: {
-    $route (to, from) {
-      if (to.path.slice(0, 7) === "/posts/") {
+    },
+    initIndex(route) {
+      if (route.path.slice(0, 7) === "/posts/") {
         this.getPageIndex();
         setTimeout(() => {
           this.getH();
           this.changeIndex();
         }, 20);
       }
+    }
+  },
+  watch: {
+    $route (to, from) {
+      this.initIndex(to)
     },
     deep: true
   }
