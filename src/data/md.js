@@ -1,3 +1,13 @@
+export default `---
+title: yiwise-components组件库管理
+date: 2018-04-29 12:15:53
+tags: [组件库, markdown]
+---
+
+你好；组件库开始发布啦
+
+<!-- more -->
+
 ## 关于版本号
 [https://www.cnblogs.com/skylor/p/9675646.html](https://www.cnblogs.com/skylor/p/9675646.html)
 
@@ -29,8 +39,8 @@ v0.20.0-beta.1
 
 |分支|用途|发布命令|
 |:------|:---|:-----------|
-|master|发布正式版本|**第一步 所有人<u>*在自己的fork分支*</u>上，将各自要发布的feature分支合入master解决冲突后，往<u>*主仓库master*</u>上提MR**<br>`git checkout master`<br>`git pull upstream master`<br>*`git merge feature-xx`<br>解决冲突。。。*<br>`git push origin master`<br>*到gitlab上从fork master往主仓库 master提MR*<br><br>**第二步 发布正式版本**<br>管理员处理好所有MR，然后执行以下命令<br>`git checkout master`<br>`npm version patch -m '发布正式版本'`<br>`git push origin master --tags`<br>`npm run build`<br>`npm publish`<br><br>**第三步 递增master分支次级版本号**（由管理员执行，改线上紧急bug发版时不需要这一步）<br>`npm version minor -m '递增master分支次级版本号'`<br>`git push origin master`|
-|develop|主仓库：发布测试版本<br><br>fork分支：用于合入当前迭代所有代码并解决冲突，之后往主仓库develop提MR发布测试版本|`npm version prerelease --preid=beta -m '组件库发测试版本ttt'`<br>`git push origin develop --tags`<br><br>**以下两步由gitlab ci自动执行**<br>`npm run build`<br>`npm publish`|
+|master|发布正式版本|**第一步 所有人<u>*在自己的fork分支*</u>上，将各自要发布的feature分支合入master解决冲突后，往<u>*主仓库master*</u>上提MR**<br>\`git checkout master\`<br>\`git pull upstream master\`<br>*\`git merge feature-xx\`<br>解决冲突。。。*<br>\`git push origin master\`<br>*到gitlab上从fork master往主仓库 master提MR*<br><br>**第二步 发布正式版本**<br>管理员处理好所有MR，然后执行以下命令<br>\`git checkout master\`<br>\`npm version patch -m '发布正式版本'\`<br>\`git push origin master --tags\`<br>\`npm run build\`<br>\`npm publish\`<br><br>**第三步 递增master分支次级版本号**（由管理员执行，改线上紧急bug发版时不需要这一步）<br>\`npm version minor -m '递增master分支次级版本号'\`<br>\`git push origin master\`|
+|develop|主仓库：发布测试版本<br><br>fork分支：用于合入当前迭代所有代码并解决冲突，之后往主仓库develop提MR发布测试版本|\`npm version prerelease --preid=beta -m '组件库发测试版本ttt'\`<br>\`git push origin develop --tags\`<br><br>**以下两步由gitlab ci自动执行**<br>\`npm run build\`<br>\`npm publish\`|
 |feature分支|从master上拉取的<br>用于开发新特性或者改bug的分支|不发布，feature分支都合入develop或master<br>只在develop或master上发布|
 
 ### master分支管理
@@ -41,41 +51,41 @@ v0.20.0-beta.1
 
 ### feature-xx分支管理
 - 生成
-```javascript
+\`\`\`javascript
 git pull upstream master:feature-xx
 git checkout feature-xx
-```
+\`\`\`
 
 - 提交
-```javascript
+\`\`\`javascript
 git commit -m '提交信息'
 git push origin feature-xx
-```
+\`\`\`
 
 - 合入develop分支并解决冲突
-```javascript
+\`\`\`javascript
 git checkout develop
 git pull upstream develop
 git merge feature-xx
 解决冲突。。。
 git push origin develop
 往主仓库提MR。。。
-```
+\`\`\`
 
 ### 发布
 master的可以管理员自己命令行发版本<a href="#预期方案">上面表格中命令</a>
 
 ### 修复线上紧急bug发版流程
-```javascript
+\`\`\`javascript
 git pull upstream master:hotfix-xx
 git checkout hotfix-xx
 改代码并提交。。。
 git push origin hotfix-xx
 从gitlab上hotfix-xx往master提MR
 管理员合并MR并发版
-```
+\`\`\`
 
 ## 存在的隐患
 - 如果发布组件库并非一次成功，那么还是会产生废版本。比如当前版本是0.19.0-beta.10，发布正式版本后版本变成0.20.0，但一会儿发现要改点东西继续发，那么正式版本会变成0.21.0，这样中间的0.20.xx版本就是废版本
 - ci运行效率低
-- 发布流程变长了，之前每个人自己在master上拉代码，自己解决冲突再推到master。现在提要一个个按次序的解决冲突再提MR，管理员合并了一个人的MR后，另一个人才能开始处理
+- 发布流程变长了，之前每个人自己在master上拉代码，自己解决冲突再推到master。现在提要一个个按次序的解决冲突再提MR，管理员合并了一个人的MR后，另一个人才能开始处理`

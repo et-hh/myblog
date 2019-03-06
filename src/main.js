@@ -3,6 +3,7 @@ import App from './App.vue'
 import './plugins/element.js'
 
 import router from '@/router/routes'
+import store from '@/store'
 
 import '@/styles/element-variables.scss';
 import '@/styles/iconfont.css';
@@ -10,7 +11,16 @@ import '@/styles/code.styl';
 import '@/styles/content.styl';
 import '@/styles/index.styl';
 
+import OutboundLink from '@/components/OutboundLink.vue'
+import TOC from '@/components/TOC.vue'
+import Content from '@/components/Content'
+
 Vue.config.productionTip = false
+
+Vue.component('OutboundLink', OutboundLink)
+Vue.component('Content', Content)
+// markdown components
+Vue.component('TOC', TOC)
 
 Vue.prototype.$site = {
   title: 'Yiwise',
@@ -57,5 +67,6 @@ Vue.prototype.$themeConfig = {
 
 new Vue({
   router,
+  store,
   render: h => h(App),
 }).$mount('#app')

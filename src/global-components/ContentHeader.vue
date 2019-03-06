@@ -11,6 +11,9 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+import moment from 'moment'
+
 export default {
   name: "FixedHeader",
   data () {
@@ -26,13 +29,14 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['postTitle', 'postDate']),
     title () {
       let t;
       switch (this.$route.path.slice(1, 6)) {
         case "posts":
-          t = '--';
+          t = this.postTitle;
           this.isPosts = true;
-          this.description = "最后更新时间：--"
+          this.description = "最后更新时间：" + moment(this.postDate).format('YYYY-MM-DD HH:mm:ss')
           break;
         case "all/":
           t = this.$themeConfig.menus.all || "时间归档";

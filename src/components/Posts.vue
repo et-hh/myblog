@@ -14,7 +14,8 @@
         class="post-card"
         id="post-card"
       >
-        <div class="content default" v-html="compiledMarkdown"></div>
+        <!-- <div class="content default" v-html="compiledMarkdown"></div> -->
+        <Content :domContent="compiledMarkdown"></Content>
         <span id="footerPost"></span>
       </el-col>
       <el-col
@@ -99,8 +100,11 @@
 </template>
 <script>
 import TocBtn from "@/components/TocBtn";
-import marked from 'marked'
-import mdData from '@/data/test-markdown.md'
+
+import mdData from '@/data/md.js'
+import markdown from '@/plugins/markdown'
+import { parseFrontmatter } from '@/plugins/markdown'
+import { mapMutations } from 'vuex'
 
 export default {
   name: "Posts",
@@ -128,12 +132,10 @@ export default {
   },
   computed:{
     compiledMarkdown () {
-      //this.articleDetail.context数据
-      var div = document.createElement('div')
-      div.innerHTML = marked(mdData, { sanitize: true })
-      console.log(div.innerHTML)
-      console.log(div.innerText)
-      return div.innerText
+      const { content, data: { title, tags, date } } = parseFrontmatter(mdData)
+      this.setPost({ title, date })
+
+      return markdown.render(content) // md1.render(mdData) // div.innerText
     }
   },
   created () {
@@ -150,6 +152,7 @@ export default {
     }, 20);
   },
   methods: {
+    ...mapMutations(['setPost']),
     throttle (fn, wait, maxTimelong) {
       var timeout = null,
         startTime = Date.parse(new Date());
