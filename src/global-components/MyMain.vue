@@ -1,6 +1,7 @@
 <template>
   <el-main
     class="my-main"
+    ref="main"
     :style="{marginLeft: mainLeft + 'px'}"
   >
     <content-header :content="content"></content-header>
@@ -8,22 +9,20 @@
       <component
         :is="whichComponent"
         :content="content"
+        :minHeight="minHeight"
       ></component>
     </keep-alive>
   </el-main>
 </template>
 <script>
 import ContentHeader from './ContentHeader'
+import { mapGetters } from 'vuex'
 export default {
   name: "Main",
   props: {
     isHide: {
       type: Boolean,
       default: false
-    },
-    content: {
-      type: Array,
-      default: () => []
     }
   },
   components: {
@@ -34,7 +33,13 @@ export default {
     About: () => import("@/components/About"),
     Home: () => import("@/components/Home")
   },
+  data() {
+    return {
+      minHeight: 0
+    }
+  },
   computed: {
+    ...mapGetters(['content']),
     whichComponent() {
       let w = "";
 
@@ -78,6 +83,9 @@ export default {
       }
       return l;
     }
+  },
+  mounted() {
+    this.minHeight = this.$refs.main.$el.offsetHeight - 177 -113 + 34
   }
 };
 </script>

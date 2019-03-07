@@ -59,7 +59,7 @@ export default {
       this.$router.push("/tags/" + e.target.innerText);
     },
     addPage() {
-      
+      this.$router.push('/posts/add')
     }
   }
 };

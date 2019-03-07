@@ -36,7 +36,8 @@ export default {
         case "posts":
           t = this.postTitle;
           this.isPosts = true;
-          this.description = "最后更新时间：" + moment(this.postDate).format('YYYY-MM-DD HH:mm:ss')
+          this.description = this.$route.path.includes('/posts/add')
+            ? '' : "最后更新时间：" + (this.postDate ? moment(this.postDate).format('YYYY-MM-DD HH:mm:ss') : '--')
           break;
         case "all/":
           t = this.$themeConfig.menus.all || "时间归档";

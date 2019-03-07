@@ -10,13 +10,11 @@
         ></my-header>
         <my-main
           :isHide="isHide"
-          :content="content"
         ></my-main>
       </el-container>
       <go-top></go-top>
     </el-container>
     <my-footer
-      :content="content"
       :isHide="isHide"
     ></my-footer>
     <div
@@ -27,12 +25,13 @@
   </div>
 </template>
 <script>
-import content from "@/data/content.js";
+import { savePost, getPost } from '@/plugins/DB'
 import MyAside from '@/global-components/MyAside'
 import MyHeader from '@/global-components/MyHeader'
 import MyMain from '@/global-components/MyMain'
 import MyFooter from '@/global-components/MyFooter'
 import GoTop from '@/global-components/GoTop'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: "Layout",
@@ -47,16 +46,17 @@ export default {
     return {
       isHide: false,
       needOverlay: false,
-      content: content,
       search: []
     };
   },
   created () {
+    this.loadPosts()
     import(/* webpackChunkName: "search" */ "@/data/search.js").then(search => {
       this.search = search.default;
     });
   },
   methods: {
+    ...mapActions(['loadPosts']),
     clickMenu () {
       this.isHide = !this.isHide;
       if (typeof window === "undefined") return;

@@ -14,6 +14,7 @@ const router = new VueRouter({
     { path: '/tags/', component: Layout },
     { path: '/tags/:tag', component: Layout },
     { path: '/posts/:post', component: Layout },
+    { path: '/posts/edit/:post', component: Layout }
   ]
 })
 

@@ -52,18 +52,20 @@
   </el-footer>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: "MyFooter",
   props: {
     isHide: {
       type: Boolean,
       default: false
-    },
-    content: {
-      type: Array,
-      default: () => []
     }
-  }
+  },
+  data() {
+    return {
+    }
+  },
+  computed: mapGetters(['content'])
 };
 </script>
 <style lang="stylus" scoped>

@@ -132,7 +132,105 @@ const { PLUGINS, REQUIRED_PLUGINS } = require('@vuepress/markdown/lib/constant')
 const componentPlugin = require('@vuepress/markdown/lib/component')
 const preWrapperPlugin = require('@vuepress/markdown/lib/preWrapper')
 // const snippetPlugin = require('@vuepress/markdown/lib/snippet')
-const convertRouterLinkPlugin = require('@vuepress/markdown/lib/link')
+// markdown-it plugin for:
+// 1. adding target="_blank" to external links
+// 2. converting internal links to <router-link>
+
+const url = require('url')
+
+const indexRE = /(^|.*\/)(index|readme).md(#?.*)$/i
+
+const convertRouterLinkPlugin = (md, externalAttrs) => {
+  let hasOpenRouterLink = false
+  let hasOpenExternalLink = false
+
+  md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+    const { relPath } = env
+    const token = tokens[idx]
+    const hrefIndex = token.attrIndex('href')
+    if (hrefIndex >= 0) {
+      const link = token.attrs[hrefIndex]
+      const href = link[1]
+      const isExternal = /^https?:/.test(href)
+      const isSourceLink = /(\/|\.md|\.html)(#.*)?$/.test(href)
+      if (isExternal || isSourceLink) {
+        Object.entries(externalAttrs).forEach(([key, val]) => {
+          token.attrSet(key, val)
+        })
+        if (/_blank/i.test(externalAttrs['target'])) {
+          hasOpenExternalLink = true
+        }
+      } else if (isSourceLink) {
+        hasOpenRouterLink = true
+        tokens[idx] = toRouterLink(token, link, relPath)
+      }
+    }
+    return self.renderToken(tokens, idx, options)
+  }
+
+  function toRouterLink (token, link, relPath) {
+    link[0] = 'to'
+    let to = link[1]
+
+    // convert link to filename and export it for existence check
+    md.$data = md.$data || {}
+    const links = md.$data.links || (md.$data.links = [])
+    links.push(to)
+
+    // relative path usage.
+    if (!to.startsWith('/')) {
+      to = relPath
+        ? url.resolve('/' + relPath, to)
+        : ensureBeginningDotSlash(to)
+    }
+
+    const indexMatch = to.match(indexRE)
+    if (indexMatch) {
+      const [, path, , hash] = indexMatch
+      to = path + hash
+    } else {
+      to = to
+        .replace(/\.md$/, '.html')
+        .replace(/\.md(#.*)$/, '.html$1')
+    }
+
+    // markdown-it encodes the uri
+    link[1] = decodeURI(to)
+
+    // export the router links for testing
+    const routerLinks = md.$data.routerLinks || (md.$data.routerLinks = [])
+    routerLinks.push(to)
+
+    return Object.create(token, {
+      tag: { value: 'router-link' }
+    })
+  }
+
+  md.renderer.rules.link_close = (tokens, idx, options, env, self) => {
+    const token = tokens[idx]
+    if (hasOpenRouterLink) {
+      token.tag = 'router-link'
+      hasOpenRouterLink = false
+    }
+    if (hasOpenExternalLink) {
+      hasOpenExternalLink = false
+      // add OutBoundLink to the beforeend of this link if it opens in _blank.
+      return '<OutboundLink/>' + self.renderToken(tokens, idx, options)
+    }
+    return self.renderToken(tokens, idx, options)
+  }
+}
+
+const beginningSlashRE = /^\.\//
+
+function ensureBeginningDotSlash (path) {
+  if (beginningSlashRE.test(path)) {
+    return path
+  }
+  return './' + path
+}
+
+// const convertRouterLinkPlugin = require('@vuepress/markdown/lib/link')
 const hoistScriptStylePlugin = md => {
   const RE = /^<(script|style)(?=(\s|>|$))/i
 
@@ -217,6 +315,15 @@ config
     .use(lineNumbersPlugin)
     .end()
 
-const md1 = config.toMd(require('markdown-it'), {})
+export const markdown = config.toMd(require('markdown-it'), {})
 
-export default md1
+export default markdown
+
+export const defaultMD = `---
+title: 请输入文章标题
+tags: 请输入文章标签如：[组件库, markdown]
+---
+
+请输入文章简介如：你好；组件库开始发布啦
+
+<!-- more -->`

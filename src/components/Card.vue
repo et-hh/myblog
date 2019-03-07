@@ -3,13 +3,15 @@
     <div class="card__title">
       <div class="flex xs12">
         <router-link
-          :to="item.path"
+          :to="'/posts/' + item.id"
           class="headline post-title-link"
         >{{item.title}}</router-link>
         <div class="post-meta">
           <time :datetime="item.lastUpdated" class="secondary--text post-time">{{item.lastUpdated | dataFormat}}</time>
         </div>
       </div>
+      <a href="javascript: void 0" class="del-icon" @click="delItem"><i class="el-icon-close"></i></a>
+      <a href="javascript: void 0" class="edit-icon" @click="editItem"><i class="el-icon-edit"></i></a>
     </div>
     <div class="card__text pt-0 pb-0">
       <div class="flex xs12" v-html="item.excerpt"></div>
@@ -25,15 +27,33 @@
         >{{tag}}</el-tag>
       </div>
     </div>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="500px">
+      <div class="confirm-info">确认删除该项？删除后将无法恢复</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleDel">确 定</el-button>
+      </span>
+    </el-dialog>
   </article>
 </template>
 
 <script>
+import { delPost } from "@/plugins/DB"
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   props: {
     item: {
       type: Object,
       default: () => {}
+    }
+  },
+  data() {
+    return {
+      dialogVisible: false
     }
   },
   filters: {
@@ -46,30 +66,22 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['loadPosts']),
     toTaglist (e) {
       this.$router.push("/tags/" + e.target.innerText);
-    }
-  },
-  created() {
-    Date.prototype.format = function(fmt) { 
-      var o = { 
-        "M+" : this.getMonth()+1,                 //月份
-        "d+" : this.getDate(),                    //日
-        "h+" : this.getHours(),                   //小时
-        "m+" : this.getMinutes(),                 //分
-        "s+" : this.getSeconds(),                 //秒
-        "q+" : Math.floor((this.getMonth()+3)/3), //季度
-        "S"  : this.getMilliseconds()             //毫秒
-      }; 
-      if(/(y+)/.test(fmt)) {
-        fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
-      }
-      for(var k in o) {
-        if(new RegExp("("+ k +")").test(fmt)){
-          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
-        }
-      }
-      return fmt; 
+    },
+    delItem() {
+      this.dialogVisible = true
+    },
+    editItem() {
+      this.$router.push('/posts/edit/' + this.item.id)
+    },
+    handleDel() {
+      delPost(this.item.id)
+
+      this.dialogVisible = false
+      this.$message.success('删除成功')
+      this.loadPosts()
     }
   }
 }
@@ -87,6 +99,18 @@ export default {
   font-weight: 400;
   line-height: 32px!important;
   letter-spacing: normal!important;
+}
+
+.edit-icon, .del-icon {
+  position: absolute;
+  right: 25px;
+  top: 25px;
+  font-size: 20px;
+  display: none;
+}
+
+.edit-icon {
+  right: 50px;
 }
 
 .secondary--text {
@@ -113,6 +137,11 @@ export default {
   box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
   background-color: #fff;
   color: rgba(0,0,0,.87);
+  &:hover {
+    .del-icon, .edit-icon {
+      display: block;
+    }
+  }
   .card__title {
     padding-bottom: 0;
   }

@@ -16,10 +16,10 @@ export default {
   },
   methods: {
     compile () {
-      // 在这里创建出一个子组件对象构造器。
+      // 在这里创建出一个子组件对象构造器。 ${this.domContent}
       // console.log(this.domContent)
       const Component = Vue.extend({
-        template: `<div class="content default"> ${this.domContent} </div>`
+        template: `<div class="content default">${this.domContent}</div>`
       })
 
       // new Component()是将上面构建的组件对象给实例化，
