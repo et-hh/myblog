@@ -85,6 +85,8 @@
   </el-header>
 </template>
 <script>
+import { getPost } from '@/plugins/DB'
+
 export default {
   name: "Header",
   props: {
@@ -134,13 +136,19 @@ export default {
         this.headerLeft = 65;
       }
     },
-    querySearch (queryString, cb) {
+    async querySearch (queryString, cb) {
       this.hasResults = true;
       this.queryStrlen = queryString.length;
       var restaurants = this.restaurants;
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants;
+      var results = await getPost({
+        keyword: this.searchVal,
+        pageNo: 1,
+        pageSize: 10
+      })
+      console.log(results)
+      // queryString
+      //   ? restaurants.filter(this.createFilter(queryString))
+      //   : restaurants;
       if (results.length === 0) {
         this.hasResults = false;
         results.push({

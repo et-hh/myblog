@@ -14,7 +14,8 @@ export default new Vuex.Store({
     },
     posts: [],
     content: [],
-    tagList: {}
+    tagList: {},
+    'x-csrf-token': ''
   },
   mutations: {
     setPost(state, { title, date }) {
@@ -26,23 +27,26 @@ export default new Vuex.Store({
     },
     setTagList(state, tagList) {
       state.tagList = tagList
+    },
+    setToken(state, token) {
+      state['x-csrf-token'] = token
     }
   },
   actions: {
-    loadPosts({ commit }) {
-      const posts = getPost()
-      commit('setContent', posts.map((item, index) => {
-        const { excerpt, content, data: { title, tags, date } } = parseFrontmatter(item)
-        const lastUpdated = typeof date === 'object' ? date.format('yyyy-MM-dd hh:mm:ss')
-          : date || new Date().format('yyyy-MM-dd hh:mm:ss')
+    async loadPosts({ commit }) {
+      const posts = await getPost()
+      commit('setContent', posts.map((item) => {
+        const { excerpt, data: { title, tags } } = parseFrontmatter(item.strippedContent)
+        const lastUpdated = typeof item.updatedAt === 'object' ? item.updatedAt.format('yyyy-MM-dd hh:mm:ss')
+          : new Date(item.updatedAt).format('yyyy-MM-dd hh:mm:ss')
 
         return  {
           tags,
           title,
           lastUpdated,
-          'id': index,
+          'id': item._id,
           'excerpt': excerpt.trim(),
-          'strippedContent': item
+          'strippedContent': item.strippedContent
         }
       }))
       // const tagList = {}
@@ -69,6 +73,7 @@ export default new Vuex.Store({
     postTitle: state => state.post.title,
     postDate: state => state.post.date,
     posts: state => state.posts,
-    content: state => state.content
+    content: state => state.content,
+    'x-csrf-token': state => state['x-csrf-token']
   }
 })

@@ -35,5 +35,27 @@ module.exports = {
   chainWebpack: (config) => {
     config.resolve.alias
       .set('vue$', 'vue/dist/vue.esm.js')
+  },
+  devServer: {
+    historyApiFallback: true,
+    contentBase: './',
+    hot: true,
+    compress: true,
+    host: '0.0.0.0',
+    port: '8080',
+    proxy: {
+      '/article': {
+        target: 'http://192.168.120.218:7001',
+        secure: false
+      },
+      '/csrf': {
+        target: 'http://192.168.120.218:7001',
+        secure: false
+      },
+      '/apiBlog/': {
+        target: 'http://192.168.120.218:7001',
+        secure: false
+      }
+    }
   }
 }

@@ -1,5 +1,5 @@
 const Config = require('markdown-it-chain')
-const emojiPlugin = require('markdown-it-emoji')
+const emojiPlugin = require('markdown-it-emoji') // https://blog.csdn.net/qq_41139830/article/details/85228748 emoji大全
 const anchorPlugin = require('markdown-it-anchor')
 const escapeHtml = require("escape-html")
 const prism = require('prismjs')
@@ -246,6 +246,7 @@ const hoistScriptStylePlugin = md => {
         return content
       }
     } catch(e) {
+      console.log(e)
       return ''
     }
   }
@@ -256,7 +257,6 @@ const highlightLinesPlugin = require('@vuepress/markdown/lib/highlightLines')
 // const highlight = require('@vuepress/markdown/lib/highlight')
 const slugify = require('@vuepress/shared-utils/lib/slugify.js')
 const externalLinks = undefined
-const anchor = undefined
 const toc = undefined
 
 // using chainedAPI
@@ -297,7 +297,7 @@ config
   .plugin(PLUGINS.EMOJI)
     .use(emojiPlugin)
     .end()
-
+  
   .plugin(PLUGINS.ANCHOR)
     .use(anchorPlugin, [{
       slugify,
@@ -317,11 +317,31 @@ config
 
 export const markdown = config.toMd(require('markdown-it'), {})
 
+for (const type of ['tip', 'warning', 'danger']) {
+  markdown.use(require('markdown-it-container'), type, {
+
+    validate: function(params) {
+      return new RegExp(`${type}`).test(params.trim());
+    },
+
+    render: (tokens, index) => {
+      const token = tokens[index]
+      let title = token.info.trim().slice(type.length).trim() || ''
+      if (title) title = `<p class="custom-block-title">${title}</p>`
+      if (token.nesting === 1) {
+        return `<div class="${type} custom-block">${title}\n`
+      } else {
+        return `</div>\n`
+      }
+    }
+  })
+}
+
 export default markdown
 
 export const defaultMD = `---
 title: 请输入文章标题
-tags: 请输入文章标签如：[组件库, markdown]
+tags: [请输入文章标签]
 ---
 
 请输入文章简介如：你好；组件库开始发布啦

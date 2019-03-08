@@ -12,12 +12,15 @@
       class="post-card"
       id="post-card"
     >
-      <Content></Content>
+      <Content :domContent="domContent"></Content>
       <span id="footerPost"></span>
     </el-col>
   </el-row>
 </template>
 <script>
+import { parseFrontmatter, markdown, defaultMD } from "@/plugins/markdown"
+const md = `一家人工智能公司~:tada::tada:`
+
 export default {
   name: "About",
   title: '自我介绍',
@@ -26,6 +29,16 @@ export default {
       type: Array,
       default: () => []
     }
+  },
+  data() {
+    return {
+      domContent: ''
+    }
+  },
+  mounted() {
+    const { content, data: { title, tags, date } } = parseFrontmatter(md)
+
+    this.domContent = markdown.render(content)
   }
 };
 </script>

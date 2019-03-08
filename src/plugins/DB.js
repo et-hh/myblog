@@ -1,29 +1,58 @@
 import { isPostIdValid } from '@/plugins'
+import request from '@/plugins/request.js'
 
-const getPostsFromStorage = () => localStorage.posts ? JSON.parse(localStorage.posts) : []
-
-export const savePost = ({ id, markdown }) => {
-  const posts = getPostsFromStorage()
-  id = +id
-
-  if (isPostIdValid(id)) {
-    posts[id] = markdown
-  } else {
-    posts.push(markdown)
-  }
-  localStorage.posts = JSON.stringify(posts)
-
-  return isPostIdValid(id) ? id : posts.length - 1
+export const login = async () => {
+  return await request({
+    url: '/apiBlog/csrf/info',
+    method: 'get'
+  })
 }
 
-export const getPost = (id) => isPostIdValid(+id) ? getPostsFromStorage()[+id] : getPostsFromStorage()
+export const savePost = async (data) => {
+  const rs = await request({
+    url: '/apiBlog/article/add',
+    method: 'post',
+    data
+  })
 
-export const delPost = id => {
-  id = +id
-  if (isPostIdValid(id)) {
-    const posts = getPostsFromStorage()
+  return rs.data
+}
 
-    posts.splice(id, 1)
-    localStorage.posts = JSON.stringify(posts)
+export const editPost = async (data) => {
+  const rs = await request({
+    url: '/apiBlog/article/modify',
+    method: 'post',
+    data
+  })
+
+  return rs.data
+}
+
+export const getPost = async (id) => {
+  if (typeof id === 'string') {
+    const { data } = await request({
+      url: '/apiBlog/article/detail/' + id,
+      method: 'get'
+    })
+
+    return data
+  } else {
+    const { data } = await request({
+      url: '/apiBlog/article/list',
+      method: 'get',
+      params: id
+    })
+
+    return data
   }
+}
+
+export const delPost = async id => {
+  await request({
+    url: '/apiBlog/article/delete',
+    method: 'post',
+    params: {
+      id
+    }
+  })
 }

@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
-import './plugins/element.js'
-import './plugins/prototype.js'
+import '@/plugins/element.js'
+import '@/plugins/prototype.js'
+import request from '@/plugins/request.js'
+import { login } from '@/plugins/DB'
 
 import router from '@/router/routes'
 import store from '@/store'
@@ -23,6 +25,11 @@ Vue.component('Content', Content)
 // markdown components
 Vue.component('TOC', TOC)
 
+login().then(({ data }) => {
+  store.commit('setToken', data)
+})
+
+Vue.prototype.$request = request
 Vue.prototype.$site = {
   title: 'Yiwise',
   description: '三人行，必有我师焉，择其善者而从之，其不善者而改之。'
@@ -38,7 +45,7 @@ Vue.prototype.$themeConfig = {
   github: 'https://github.com/yiwise', //点击github跳转的地址
   vssue: {
     //评论的配置,
-    need: true, //是否需要评论
+    need: false, //是否需要评论
     development: {
       //开发环境下的配置
       clientId: 'ad23c1ee34d09af2ef74',

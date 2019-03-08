@@ -4,7 +4,7 @@
       <el-col :span="16" :xs="{span: 24}" :sm="{span: 23}" :md="{span: 23}" :lg="{span: 16}" class="post-card" id="post-card">
         <Content v-if="type === 'view'" :domContent="compiledMarkdown"></Content>
         <div v-else>
-          <el-tabs v-model="tab" @tab-click="handleTabClick">
+          <el-tabs v-model="tab">
             <el-tab-pane name="Write" label="Write">
               <div class="el-textarea">
                 <textarea
@@ -13,12 +13,12 @@
                   v-model="mdText"
                   class="el-textarea__inner"
                   style="resize: vertical;"
-                  :style="{'min-height': (minHeight - 40 - 70 - 39 - 55) + 'px'}"
+                  :style="{'height': (minHeight - 40 - 70 - 39 - 55) + 'px'}"
                 ></textarea>
               </div>
             </el-tab-pane>
             <el-tab-pane name="Preview" label="Preview">
-              <Content :domContent="compiledMd" lazy></Content>
+              <Content :domContent="compiledMd" lazy :style="{'height': (minHeight - 40 - 70 - 39 - 55) + 'px', 'overflow': 'auto'}"></Content>
             </el-tab-pane>
           </el-tabs>
           <div class="btn-group">
@@ -46,19 +46,19 @@
     <el-row type="flex" justify="space-around" class="post-nav" v-if="type === 'view'">
       <el-col :span="7" class="post-prev">
         <div v-if="!isNaN(prevPost)">
-          <router-link :to="content[prevPost].path || '/'">
+          <router-link :to="('/posts/' + content[prevPost].id) || '/'">
             <i class="el-icon-arrow-left"></i>Prev
           </router-link>
-          <router-link tag="p" :to="content[prevPost].path || '/'" class="nav-title">{{content[prevPost].title}}</router-link>
+          <router-link tag="p" :to="('/posts/' + content[prevPost].id) || '/'" class="nav-title">{{content[prevPost].title}}</router-link>
         </div>
       </el-col>
       <el-col class="post-next" :lg="{pull: 5}" :span="7">
         <div v-if="!isNaN(nextPost)">
-          <router-link :to="content[nextPost].path || '/'">
+          <router-link :to="('/posts/' + content[nextPost].id) || '/'">
             Next
             <i class="el-icon-arrow-right"></i>
           </router-link>
-          <router-link tag="p" :to="content[nextPost].path || '/'" class="nav-title">{{content[nextPost].title}}</router-link>
+          <router-link tag="p" :to="('/posts/' + content[nextPost].id) || '/'" class="nav-title">{{content[nextPost].title}}</router-link>
         </div>
       </el-col>
     </el-row>
@@ -72,7 +72,7 @@
 </template>
 <script>
 import TocBtn from "@/components/TocBtn"
-import { savePost, getPost } from "@/plugins/DB"
+import { savePost, getPost, editPost } from "@/plugins/DB"
 import { isPostIdValid } from "@/plugins"
 import { parseFrontmatter, markdown, defaultMD } from "@/plugins/markdown"
 import { mapMutations, mapGetters } from "vuex"
@@ -107,11 +107,7 @@ export default {
 	computed: {
     ...mapGetters(['content']),
 		compiledMarkdown() {
-			const {
-				content,
-				data: {title, tags, date}
-			} = parseFrontmatter(this.viewMdText)
-			this.setPost({title, date})
+			const { content, data: { title, tags, date } } = parseFrontmatter(this.viewMdText)
 
 			return markdown.render(content)
 		}
@@ -123,11 +119,7 @@ export default {
 		},
 		tab(val) {
 			if (val === "Preview") {
-				const {
-					content,
-					data: {title, tags, date}
-				} = parseFrontmatter(this.mdText)
-				// this.setPost({ title, date })
+				const { content, data: {title, tags, date} } = parseFrontmatter(this.mdText)
 
 				this.compiledMd = markdown.render(content)
 			}
@@ -148,6 +140,8 @@ export default {
 		}, 20)
 	},
 	methods: {
+    editPost,
+    savePost,
 		...mapMutations(["setPost"]),
 		throttle(fn, wait, maxTimelong) {
 			var timeout = null,
@@ -172,7 +166,7 @@ export default {
 				this.type = "edit"
         this.id = params.post
         this.tab = 'Write'
-        const post = this.content.find(item => item.id === +this.id) || { strippedContent: '' }
+        const post = this.content.find(item => item.id === this.id) || { strippedContent: '' }
         this.mdText = post.strippedContent
         this.$refs.textarea && this.$refs.textarea.focus()
         this.setPost({title: post.title, date: post.lastUpdated})
@@ -186,31 +180,36 @@ export default {
 			} else {
 				this.type = "view"
         this.id = params.post
-        this.viewMdText = (this.content.find(item => item.id === +this.id) || { strippedContent: '' }).strippedContent
+        const post = this.content.find(item => item.id === this.id) || { strippedContent: '' }
+        this.viewMdText = post.strippedContent
+        this.setPost({title: post.title, date: post.lastUpdated})
       }
     },
-		handleCancelEdit() {
+		async handleCancelEdit() {
 			// 如果是编辑，回到Preview状态
 			// 如果是添加，直接回到首页
 			if (this.type === "add") {
 				this.$router.push("/")
 			} else if (this.type === "edit") {
-				this.mdText = getPost(this.id)
-				this.tab = "Preview"
+        this.mdText = (await getPost(this.id)).strippedContent
+        this.tab = "Preview"
 			}
 		},
 		handleSubmit() {
+      const { content, data: {title, tags} } = parseFrontmatter(this.mdText)
+
 			// 将该文字存入数据库
-			this.id = savePost({
-				id: isPostIdValid(this.id) ? this.id : "",
-				markdown: this.mdText
-			})
+			this.id = this[isPostIdValid(this.id) ? 'editPost' : 'savePost']({
+        id: isPostIdValid(this.id) ? this.id : undefined,
+        tags,
+        title,
+        'strippedContent': this.mdText
+      })
 
 			this.type = "edit"
 			this.tab = "Preview"
 			this.$message.success("保存成功")
 		},
-		handleTabClick({label}, e) {},
 		changeToc() {
 			this.hasToc = !this.hasToc
 		},
@@ -262,13 +261,14 @@ export default {
 			})
 		},
 		getPageIndex() {
-			if (this.content.length === 0 || this.content.length === 1) {
+			if (this.content.length <= 1) {
 				this.nextPost = NaN
 				this.prevPost = NaN
 				return
-			}
+      }
+
 			for (var i = 0, len = this.content.length; i < len; i++) {
-				if (this.content[i].path === this.$route.params.path) {
+				if (this.content[i].id === this.id) {
 					if (i + 1 === this.content.length) {
 						this.nextPost = NaN
 						this.prevPost = i - 1
@@ -278,7 +278,9 @@ export default {
 					} else {
 						this.nextPost = i + 1
 						this.prevPost = i - 1
-					}
+          }
+
+          return
 				}
 			}
 		},
