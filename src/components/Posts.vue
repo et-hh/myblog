@@ -75,7 +75,7 @@ import TocBtn from "@/components/TocBtn"
 import { savePost, getPost, editPost } from "@/plugins/DB"
 import { isPostIdValid } from "@/plugins"
 import { parseFrontmatter, markdown, defaultMD } from "@/plugins/markdown"
-import { mapMutations, mapGetters } from "vuex"
+import { mapMutations, mapGetters, mapActions } from "vuex"
 
 export default {
 	name: "Posts",
@@ -142,7 +142,8 @@ export default {
 	methods: {
     editPost,
     savePost,
-		...mapMutations(["setPost"]),
+    ...mapMutations(["setPost"]),
+    ...mapActions(['loadPosts']),
 		throttle(fn, wait, maxTimelong) {
 			var timeout = null,
 				startTime = Date.parse(new Date())
@@ -207,7 +208,8 @@ export default {
       })
 
 			this.type = "edit"
-			this.tab = "Preview"
+      this.tab = "Preview"
+      this.loadPosts()
 			this.$message.success("保存成功")
 		},
 		changeToc() {

@@ -45,15 +45,15 @@ module.exports = {
     port: '8080',
     proxy: {
       '/article': {
-        target: 'http://192.168.120.218:7001',
+        target: 'http://localhost:3001',
         secure: false
       },
       '/csrf': {
-        target: 'http://192.168.120.218:7001',
+        target: 'http://localhost:3001',
         secure: false
       },
       '/apiBlog/': {
-        target: 'http://192.168.120.218:7001',
+        target: 'http://localhost:3001',
         secure: false
       }
     }

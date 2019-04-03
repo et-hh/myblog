@@ -1,12 +1,12 @@
-import { isPostIdValid } from '@/plugins'
+// import { isPostIdValid } from '@/plugins'
 import request from '@/plugins/request.js'
 
-export const login = async () => {
-  return await request({
-    url: '/apiBlog/csrf/info',
-    method: 'get'
-  })
-}
+// export const login = async () => {
+//   return await request({
+//     url: '/apiBlog/csrf/info',
+//     method: 'get'
+//   })
+// }
 
 export const savePost = async (data) => {
   const rs = await request({
@@ -15,7 +15,7 @@ export const savePost = async (data) => {
     data
   })
 
-  return rs.data
+  return rs.data.data
 }
 
 export const editPost = async (data) => {
@@ -25,7 +25,7 @@ export const editPost = async (data) => {
     data
   })
 
-  return rs.data
+  return rs.data.data
 }
 
 export const getPost = async (id) => {
@@ -35,7 +35,7 @@ export const getPost = async (id) => {
       method: 'get'
     })
 
-    return data
+    return data.data
   } else {
     const { data } = await request({
       url: '/apiBlog/article/list',
@@ -43,7 +43,7 @@ export const getPost = async (id) => {
       params: id
     })
 
-    return data
+    return data.data
   }
 }
 

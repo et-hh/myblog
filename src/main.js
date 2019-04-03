@@ -3,7 +3,7 @@ import App from './App.vue'
 import '@/plugins/element.js'
 import '@/plugins/prototype.js'
 import request from '@/plugins/request.js'
-import { login } from '@/plugins/DB'
+// import { login } from '@/plugins/DB'
 
 import router from '@/router/routes'
 import store from '@/store'
@@ -25,9 +25,9 @@ Vue.component('Content', Content)
 // markdown components
 Vue.component('TOC', TOC)
 
-login().then(({ data }) => {
-  store.commit('setToken', data)
-})
+// login().then(({ data }) => {
+//   store.commit('setToken', data)
+// })
 
 Vue.prototype.$request = request
 Vue.prototype.$site = {

@@ -37,36 +37,18 @@ export default new Vuex.Store({
       const posts = await getPost()
       commit('setContent', posts.map((item) => {
         const { excerpt, data: { title, tags } } = parseFrontmatter(item.strippedContent)
-        const lastUpdated = typeof item.updatedAt === 'object' ? item.updatedAt.format('yyyy-MM-dd hh:mm:ss')
-          : new Date(item.updatedAt).format('yyyy-MM-dd hh:mm:ss')
+        const lastUpdated = typeof item.lastUpdated === 'object' ? item.lastUpdated.format('yyyy-MM-dd hh:mm:ss')
+          : new Date(item.lastUpdated).format('yyyy-MM-dd hh:mm:ss')
 
-        return  {
+        return {
           tags,
           title,
           lastUpdated,
-          'id': item._id,
-          'excerpt': excerpt.trim(),
-          'strippedContent': item.strippedContent
+          id: item._id,
+          excerpt: excerpt.trim(),
+          strippedContent: item.strippedContent
         }
       }))
-      // const tagList = {}
-      // posts.forEach((item, index) => {
-      //   const { excerpt, content, data: { title, tags, date } } = parseFrontmatter(item)
-      //   const lastUpdated = typeof date === 'object' ? date.format('yyyy-MM-dd hh:mm:ss')
-      //     : date || new Date().format('yyyy-MM-dd hh:mm:ss')
-      // // this.setPost({ title, date })
-
-      // // return markdown.render(content)
-      // tagList[] = {
-      //     tags,
-      //     title,
-      //     lastUpdated,
-      //     'id': index,
-      //     'excerpt': excerpt.trim(),
-      //     'strippedContent': content
-      //   }
-      // })
-      // commit('setTagList', tagList)
     }
   },
   getters: {
