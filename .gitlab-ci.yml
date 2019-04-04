@@ -2,7 +2,7 @@ production:
   tags:
     - shared
   only:
-    - master@ai-call-platform/yiwise-official-BBS
+    - master@zhoujie/yiwise-official-BBS
   image: yiwise/alpine:deploy
   stage: deploy
   script:
