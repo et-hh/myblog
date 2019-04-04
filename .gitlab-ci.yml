@@ -8,10 +8,10 @@ production:
   script:
     - ls -la
     - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_PROD" > ~/.ssh/id_dsa
+    - echo "$SSH_PRIVATE_KEY_TEST" > ~/.ssh/id_dsa
     - chmod 600 ~/.ssh/id_dsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-    # - echo $PRODUCTION_SERVER
+    # - echo $TEST_SERVER
     # - ifconfig
     # - cat ~/.ssh/id_dsa
-    - rsync -rav ./ $PRODUCTION_SERVER
+    - rsync -rav ./ $TEST_SERVER
