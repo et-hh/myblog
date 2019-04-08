@@ -55,7 +55,7 @@ const highlight = (str, lang) => {
     try {
       loadLanguages([lang])
     } catch (e) {
-      logger.warn(`[vuepress] Syntax highlight for language "${lang}" is not supported.`)
+      return 
     }
   }
   if (prism.languages[lang]) {

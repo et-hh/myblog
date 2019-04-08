@@ -45,16 +45,13 @@ module.exports = {
     port: '8080',
     proxy: {
       '/article': {
-        target: 'http://localhost:3001',
-        secure: false
+        target: 'http://bbs.yiwise.com'
       },
       '/csrf': {
-        target: 'http://localhost:3001',
-        secure: false
+        target: 'http://bbs.yiwise.com'
       },
-      '/apiBlog/': {
-        target: 'http://localhost:3001',
-        secure: false
+      '/apiBlog': {
+        target: 'http://bbs.yiwise.com'
       }
     }
   }

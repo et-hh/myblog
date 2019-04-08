@@ -159,7 +159,7 @@ export default {
 				}
 			}
 		},
-		setType(route) {
+		async setType(route) {
 			const {params, path} = route
 			if (!path.includes("/posts")) return
 
@@ -181,10 +181,15 @@ export default {
 			} else {
 				this.type = "view"
         this.id = params.post
-        const post = this.content.find(item => item.id === this.id) || { strippedContent: '' }
+        const post = await this.fetchContent(this.id)
+        console.log(123, post)
         this.viewMdText = post.strippedContent
         this.setPost({title: post.title, date: post.lastUpdated})
       }
+    },
+    async fetchContent(id) {
+      const data = await getPost(id)
+      return data
     },
 		async handleCancelEdit() {
 			// 如果是编辑，回到Preview状态
