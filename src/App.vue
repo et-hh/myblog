@@ -2,11 +2,15 @@
   <div id="app">
     <router-view></router-view>
   </div>
+  <div></div>
 </template>
 
 <script>
 export default {
   name: 'app',
-  data(){return {}}
+  data(){return {}},
+  computed: {
+    f(){}
+  }
 }
 </script>
