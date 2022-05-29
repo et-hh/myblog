@@ -160,10 +160,7 @@ const convertRouterLinkPlugin = (md, externalAttrs) => {
         if (/_blank/i.test(externalAttrs['target'])) {
           hasOpenExternalLink = true
         }
-      } else if (isSourceLink) {
-        hasOpenRouterLink = true
-        tokens[idx] = toRouterLink(token, link, relPath)
-      }
+      }  
     }
     return self.renderToken(tokens, idx, options)
   }
