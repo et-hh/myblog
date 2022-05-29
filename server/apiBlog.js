@@ -8,7 +8,7 @@ const Post = require("./postSchema")
 
 // middleware that is specific to this router
 router.use(function timeLog (req, res, next) {
-  console.log('Time: ', Date.now())
+  
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', '*')
   res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
@@ -52,7 +52,7 @@ router.post('/article/modify', async (req, res) => {
     if (err) {
       res.json({ status: 'fail', error: err })
     } else {
-      console.log(post)
+      
       res.json({ status: 'success', message: '编辑成功', data: req.body.id})
     }
   })
