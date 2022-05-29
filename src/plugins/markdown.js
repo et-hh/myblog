@@ -23,6 +23,12 @@ function wrap (code, lang) {
   }
   return `<pre v-pre class="language-${lang}"><code>${code}</code></pre>`
 }
+const a = 1
+while(a) {
+  (function(){
+    return 'abc'
+  })()
+}
 
 
 
