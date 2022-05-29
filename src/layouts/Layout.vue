@@ -90,6 +90,7 @@ export default {
   pointer-events: none;
   transition: 0.5s cubic-bezier(0.25, 0.8, 0.5, 1);
   z-index: 35;
+  position: absolute;
 }
 
 .overlay:before {
