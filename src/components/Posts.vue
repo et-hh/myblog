@@ -182,7 +182,7 @@ export default {
 				this.type = "view"
         this.id = params.post
         const post = await this.fetchContent(this.id)
-        console.log(123, post)
+        
         this.viewMdText = post.strippedContent
         this.setPost({title: post.title, date: post.lastUpdated})
       }

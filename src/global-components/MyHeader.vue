@@ -145,7 +145,7 @@ export default {
         pageNo: 1,
         pageSize: 10
       })
-      console.log(results)
+      
       // queryString
       //   ? restaurants.filter(this.createFilter(queryString))
       //   : restaurants;

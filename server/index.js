@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use('/apiBlog', apiBlog)
 app.listen(3001,() => {
-  console.log('app listening on port 3001.')
+  
 })
 
 
