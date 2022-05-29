@@ -24,6 +24,10 @@ function wrap (code, lang) {
   return `<pre v-pre class="language-${lang}"><code>${code}</code></pre>`
 }
 
+
+
+    var afbdsa =1 ;
+
 const highlight = (str, lang) => {
   if (!lang) {
     return wrap(str, 'text')
