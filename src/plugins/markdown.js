@@ -26,8 +26,7 @@ function wrap (code, lang) {
 
 
 
-    const afbdsa =1 ;
-console.log(afbdsa)
+     export    const afbdsa =1 ;
 
 const highlight = (str, lang) => {
   if (!lang) {
